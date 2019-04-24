@@ -23,10 +23,11 @@ My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS
 4. Add the Developer tab to Outlook (Options... Customize Ribbon... and tick the Developer tab entry (which is off by default)
 5. Go to the Developer Tab and click "Visual Basic" which brings up the Visual Basic editor
 6. In the VB Editor window choose File | Import and load the "ScanOutlook.bas" file
-7. Open your database administrator interface and load tblEmail.sql into a new database, correcting any compatability issues that may arrise
-8. Edit the VB code to reflect your chosen names in the Const statements at the top of the code
-9. Edit the routine "generateFTPScript()" replacing "ftpUserName" with your user name and "ftpPassword" with your password.
-10.Run the code and fix any issues with connectivity
+7. In Tools | References make sure that the following tools are selected: Visual Basic For Applications; Microsoft Outlook 15.0 Object Library; mscorlib.dll; OLE Automation; Microsoft Office 15.0 Object Library; Microsoft OLE DB Simple Provider 1.5 Library; Microsoft ActiveX Data Ojects 2.7 Library
+8. Open your database administrator interface and load tblEmail.sql into a new database, correcting any compatability issues that may arrise
+9. Edit the VB code to reflect your chosen names in the Const statements at the top of the code
+10. Edit the routine "generateFTPScript()" replacing "ftpUserName" with your user name and "ftpPassword" with your password.
+11.Run the code and fix any issues with connectivity
 
 If you have issues mid way through a run, you will need to delete everything that has been already loaded. The routine only loads email that are newer than those already loaded. The attachments will over-write previously saved files.
 
