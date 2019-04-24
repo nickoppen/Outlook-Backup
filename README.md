@@ -3,11 +3,11 @@ Back up your Outlook email to a database via ODBC and save attachements to an FT
 
 This little routine breaks the dependence the outlook user has on the Outlook application to store old email files. If you want to back up your email in a way that allows you to move to a different email application, this routing extracts all email from .pst files currently linked to Outlook and stores them in a regular database.
 
-## WARNING: The code contains "in the clear" usenames and passwords. Use only in an otherwise secure environment.
+### WARNING: The code contains "in the clear" usenames and passwords. Use only in an otherwise secure environment.
 
 I wrote this using VBA on Outlook 2013. I'm quite happy with the results on this platform but I have no idea if it works with any other version.
 
-My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS box that I bought in 2008. I believe that newer versions have similar capabilities. I connect to the database via ODBC64. The FTP client is the command line tool supplied with Win10.
+My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS box that I bought in 2008. Newer versions have similar capabilities. QNAP now has a version of PostGreSQL an Synology supports MariaDB. I connect to the database via ODBC64. The FTP client is the command line tool supplied with Win10.
 
 # Requirements
 1. An SQL database (I'm using mySQL version 5.0.27 on my QNAP box)
@@ -31,3 +31,7 @@ My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS
 If you have issues mid way through a run, you will need to delete everything that has been already loaded. The routine only loads email that are newer than those already loaded. The attachments will over-write previously saved files.
 
 Once you have your connections and permissions have been sorted out, delete everthing again and run the whole lot from the top. You will be left with .cmd .ftp and .log files prefixed with the run date (in YYYY-MM-DD format). Delete manually as needed. I the Shell command with is asynchronous which means that the VB code exits before the generated cmd file has finished executing.
+
+When everything is good, you can remove the Developer Tab from your ribbon and add a button that directly executes the code. To delete the developer tab, go to File | Options | Customize Ribbon and deselect Developer in the right hand box. To add a button to execute the code directly, add a new tab or open an existing one, and add a new group in the right hand panel. Then on the left hand side choose "Macros" in the "Choose Commands From:" drop-down list and the name "Project1.scanOutlookMail" (or whatever name you called it) will appear in the left hand box. Select the macro name and with your new tab and group selected in the right hand box click the "Add>>" button between the boxes.
+
+This code is offered for personal use without support. Feel free to fork, extend, alter, modify as you please.
