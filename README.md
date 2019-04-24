@@ -27,7 +27,7 @@ My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS
 8. Open your database administrator interface and load tblEmail.sql into a new database, correcting any compatability issues that may arrise
 9. Edit the VB code to reflect your chosen names in the Const statements at the top of the code
 10. Edit the routine "generateFTPScript()" replacing "ftpUserName" with your user name and "ftpPassword" with your password.
-11.Run the code and fix any issues with connectivity
+11. Run the code and fix any issues with connectivity
 
 If you have issues mid way through a run, you will need to delete everything that has been already loaded. The routine only loads email that are newer than those already loaded. The attachments will over-write previously saved files.
 
