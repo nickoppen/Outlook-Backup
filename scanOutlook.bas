@@ -4,7 +4,7 @@ Sub scanOutlookMail()
     Const strConn As String = "DSN=MyODBCConnectionToTheDatabase"
     Const remoteAttmtStore As String = "Backup/someLocation"
     Const localAttmtStore As String = "C:\myOutlookMailFolder"
-    Const ftpServer As String = "MyFTPServer"
+    Const ftpServer As String = "myFTPServer"
     Dim ignoreAttmt As ArrayList
     Set ignoreAttmt = New ArrayList
     ignoreAttmt.Add "graycol.gif"   ''common useless gifs
@@ -111,14 +111,15 @@ Function scanFolder(topFolder As Outlook.Folder, attachmentStore As String, attm
                             End If
                         Next attmt
                     End If
+                    attmts = Left(dequote(attmts), 255)
     
                     ' insert all of the data related to one email in one big insert
                     strInsert = "INSERT INTO tblEmail "
                     VALUES = " VALUES ('" + olMail.conversationId + "', '" + conversationIndex + "', '" + sourceFile + "', '" + folderName + "', '" + doublequote(olMail.Subject) _
                                 + "', '" + doublequote(olMail.Sender) + "', '" + olMail.SenderEmailAddress + "', '" + dequote(olMail.CC) + "', '" + dequote(olMail.To) + "', '" _
                                 + Format(olMail.ReceivedTime, "YYYY-MM-DD HH:MM:SS") + "', '" + Format(olMail.SentOn, "YYYY-MM-DD HH:MM:SS") _
-                                + "', '" + recipients + "', '" + doublequote(olMail.Body) + "', '" + subStore + "', '" + attmts + "')"
-                                
+                                + "', '" + recipients + "', '" + demoji(doublequote(olMail.Body)) + "', '" + subStore + "', '" + attmts + "')"
+                      Debug.Print VALUES
                     conn.Execute strInsert + VALUES
                 End If ' not alread stored
             End If ' within date range
@@ -233,6 +234,17 @@ Private Function dequote(str As String)
 
 End Function
 
+Private Function demoji(txt As String)
+    
+    Dim regEx As Object
+    
+    Set regEx = CreateObject("vbscript.regexp")
+    regEx.Pattern = "[^\u0000-\u007F]"
+    demoji = regEx.Replace(txt, "")
+
+End Function
+
+
 Private Function generateFTPScript(subStores As ArrayList, ftpServer As String, localAttmtStore As String, remoteAttmtStore As String)
 
     Dim remoteBaseDir As String
@@ -248,8 +260,8 @@ Private Function generateFTPScript(subStores As ArrayList, ftpServer As String, 
     remoteBaseDir = Left(subStores(0), 4)
     Print #2, "ftp -i -s:" + scriptFilename + " > " + localAttmtStore + "\" + baseFileName + ".log"
     Print #1, "open " + ftpServer
-    Print #1, "ftpUserName"
-    Print #1, "ftpPassword"
+    Print #1, "myFTPUser"          ''' FTP user
+    Print #1, "myFTPpassword"        ''' FTP password
     Print #1, "binary"
     Print #1, "lcd " + localAttmtStore
     Print #1, "cd " + remoteAttmtStore
