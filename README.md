@@ -7,7 +7,7 @@ This little routine breaks the dependence the outlook user has on the Outlook ap
 
 I wrote this using VBA on Outlook 2013. I'm quite happy with the results on this platform but I have no idea if it works with any other version.
 
-My FTP server and mySQL database are the inbuilt apps that came with my QNAP NAS box that I bought in 2008. Newer versions have similar capabilities. QNAP now has a version of PostGreSQL an Synology supports MariaDB. I connect to the database via ODBC64. The FTP client is the command line tool supplied with Win10.
+The current version is uses the Synology Diskstation for storage and its MariaDb app and FTP server. QNAP currently supports a version of PostGreSQL which would also work (one table is not hard). I connect to the database via ODBC64. The FTP client is the command line tool supplied with Win10.
 
 # Requirements
 1. An SQL database (I'm using mySQL version 5.0.27 on my QNAP box)
