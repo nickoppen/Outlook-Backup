@@ -1,10 +1,11 @@
 Attribute VB_Name = "Scan"
 
+
 Sub scanOutlookMail()
-    Const strConn As String = "DSN=MyODBCConnectionToTheDatabase"
-    Const remoteAttmtStore As String = "Backup/someLocation"
-    Const localAttmtStore As String = "C:\myOutlookMailFolder"
-    Const ftpServer As String = "myFTPServer"
+    Const strConn As String = "DSN=camelEMail64"
+    Const remoteAttmtStore As String = "Backup/emailBackup"
+    Const localAttmtStore As String = "D:\nick6\Mail\ArchiveFiles"
+    Const ftpServer As String = "Camel"
     Dim ignoreAttmt As ArrayList
     Set ignoreAttmt = New ArrayList
     ignoreAttmt.Add "graycol.gif"   ''common useless gifs
@@ -20,8 +21,9 @@ Sub scanOutlookMail()
     Dim rst As ADODB.Recordset
     Set conn = New ADODB.Connection
     conn.ConnectionString = strConn
-    On Error GoTo opps  ' could be the ODBC or the database
+    On Error GoTo openErr  ' could be the ODBC or the database
     conn.Open
+    conn.Execute ("USE dbEmail")
     On Error GoTo 0
 
     Dim attmtSubStores As ArrayList
@@ -56,11 +58,16 @@ Sub scanOutlookMail()
         Call generateFTPScript(attmtSubStores, ftpServer, localAttmtStore, remoteAttmtStore)
     End If
     
-    Debug.Print "Done..."
+    MsgBox "Done...", vbInformation, "Email Backup"
     Exit Sub
     
+openErr:
+    MsgBox "The database connection did not open..."
+    conn.Close
+    Exit Sub
+
 opps:
-    MsgBox "Something went wrong with the database connection..."
+    MsgBox "Something went wrong with the database connection... " + Err.Description
     Exit Sub
 End Sub
 
@@ -72,7 +79,7 @@ Function scanFolder(topFolder As Outlook.Folder, attachmentStore As String, attm
     Dim attmt As Outlook.Attachment
     Dim attmts As String
     Dim recip As Outlook.Recipient
-    Dim recipients As String
+    Dim strTo, recipients As String
     Dim conversationIndex As String
     Dim unk As Integer
     Dim newFileName As String   ' the dequoted file name
@@ -112,13 +119,14 @@ Function scanFolder(topFolder As Outlook.Folder, attachmentStore As String, attm
                         Next attmt
                     End If
                     attmts = Left(dequote(attmts), 255)
+                    strTo = Left(dequote(olMail.To), 255)
     
                     ' insert all of the data related to one email in one big insert
                     strInsert = "INSERT INTO tblEmail "
-                    VALUES = " VALUES ('" + olMail.conversationId + "', '" + conversationIndex + "', '" + sourceFile + "', '" + folderName + "', '" + doublequote(olMail.Subject) _
-                                + "', '" + doublequote(olMail.Sender) + "', '" + olMail.SenderEmailAddress + "', '" + dequote(olMail.CC) + "', '" + dequote(olMail.To) + "', '" _
+                    VALUES = " VALUES ('" + olMail.conversationId + "', '" + conversationIndex + "', '" + sourceFile + "', '" + folderName + "', '" + demoji(doublequote(olMail.Subject)) _
+                                + "', '" + doublequote(olMail.Sender) + "', '" + olMail.SenderEmailAddress + "', '" + dequote(olMail.CC) + "', '" + strTo + "', '" _
                                 + Format(olMail.ReceivedTime, "YYYY-MM-DD HH:MM:SS") + "', '" + Format(olMail.SentOn, "YYYY-MM-DD HH:MM:SS") _
-                                + "', '" + recipients + "', '" + demoji(doublequote(olMail.Body)) + "', '" + subStore + "', '" + attmts + "')"
+                                + "', '" + recipients + "', '" + demoji(doublequote(olMail.Body)) + "', '" + subStore + "', '" + attmts + "', '" + Format(Now(), "YYYY-MM-DD") + "')"
                       Debug.Print VALUES
                     conn.Execute strInsert + VALUES
                 End If ' not alread stored
@@ -260,8 +268,10 @@ Private Function generateFTPScript(subStores As ArrayList, ftpServer As String, 
     remoteBaseDir = Left(subStores(0), 4)
     Print #2, "ftp -i -s:" + scriptFilename + " > " + localAttmtStore + "\" + baseFileName + ".log"
     Print #1, "open " + ftpServer
-    Print #1, "myFTPUser"          ''' FTP user
-    Print #1, "myFTPpassword"        ''' FTP password
+    Print #1, "FTPUser"          ''' FTP user
+    ''Print #1, "admin"
+    Print #1, "oppen20FTP"        ''' FTP password
+    ''Print #1, "oppen20FTP"
     Print #1, "binary"
     Print #1, "lcd " + localAttmtStore
     Print #1, "cd " + remoteAttmtStore
